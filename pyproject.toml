@@ -11,6 +11,7 @@ pandas = "^1.2.4"
 great-expectations = "^0.13.19"
 
 [tool.poetry.dev-dependencies]
+black = "^21.5b2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
