@@ -12,9 +12,10 @@ def is_valid(validation_responses: List[Dict]) -> bool:
 
 
 class Validator(ABC):
-    def __init__(self, df):
+    def __init__(self, df, silent: bool = False):
         self.df: pd.DataFrame = df
         self.dfe: PandasDataset = ge.from_pandas(self.df)
+        self.silent: bool = silent
 
     @abstractmethod
     def __call__(self, **kwargs) -> pd.DataFrame:
@@ -66,15 +67,16 @@ class BarcodesValidator(Validator):
         responses: List[Dict] = [self.dfe.expect_column_values_to_be_unique("barcode")]
 
         if not is_valid(responses):
-            pretty_print(
-                "Barcodes Validator - No Barcode Duplicates",
-                [
-                    "Next barcodes are duplicated",
-                    *self.df[self.df.duplicated(subset=["barcode"])][
-                        "barcode"
-                    ].tolist(),
-                ],
-            )
+            if not self.silent:
+                pretty_print(
+                    "Barcodes Validator - No Barcode Duplicates",
+                    [
+                        "Next barcodes are duplicated",
+                        *self.df[self.df.duplicated(subset=["barcode"])][
+                            "barcode"
+                        ].tolist(),
+                    ],
+                )
 
             self.df = self.df.drop_duplicates(subset=["barcode"], keep=False)
 
@@ -84,12 +86,13 @@ class BarcodesValidator(Validator):
         ]
 
         if not is_valid(responses):
-            pretty_print(
-                "Barcodes Validator - No Orders Without Barcodes",
-                [
-                    "Next orders don't have barcodes",
-                    *self.df[self.df["order_id"].isna()]["barcode"].tolist(),
-                ],
-            )
+            if not self.silent:
+                pretty_print(
+                    "Barcodes Validator - No Orders Without Barcodes",
+                    [
+                        "Next orders don't have barcodes",
+                        *self.df[self.df["order_id"].isna()]["barcode"].tolist(),
+                    ],
+                )
 
             self.df = self.df.dropna(subset=["order_id"])
