@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "etl-vouchers"
+version = "0.1.0"
+description = ""
+authors = ["vsheruda <vladyslav.sheruda@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "3.7.2"
+pandas = "^1.2.4"
+great-expectations = "^0.13.19"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
