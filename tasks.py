@@ -20,12 +20,8 @@ def etl(c, orders, barcodes, dest=None):
 @task
 def unused_barcodes(c, orders, barcodes):
     try:
-        resp: PipelineResponse = pipeline(orders, barcodes, transform_only=True, silent=True)
-
         VoucherStatistic(
-            resp.df_orders,
-            resp.df_barcodes,
-            resp.df_vouchers
+            orders_filepath=orders, barcodes_filepath=barcodes
         ).unused_barcodes()
     except ETLVouchersException as e:
         print("Failed with: ", e)
@@ -34,12 +30,8 @@ def unused_barcodes(c, orders, barcodes):
 @task
 def top_customers(c, orders, barcodes):
     try:
-        resp: PipelineResponse = pipeline(orders, barcodes, transform_only=True, silent=True)
-
         VoucherStatistic(
-            resp.df_orders,
-            resp.df_barcodes,
-            resp.df_vouchers
+            orders_filepath=orders, barcodes_filepath=barcodes
         ).top_customers(top=5)
     except ETLVouchersException as e:
         print("Failed with: ", e)

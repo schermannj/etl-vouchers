@@ -8,7 +8,7 @@ from etl_vouchers.exceptions import InvalidSourceFile
 from etl_vouchers.validator import BarcodesValidator, OrdersValidator
 
 
-def _extract(filepath: str):
+def extract(filepath: str):
     try:
         return pd.read_csv(filepath)
     except Exception as e:
@@ -19,11 +19,9 @@ def _transform(
     df_orders: pd.DataFrame,
     df_barcodes: pd.DataFrame,
 ):
-    df_vouchers: pd.DataFrame = (
-        df_orders.merge(df_barcodes, on=["order_id"], how="left")
-        .astype({"barcode": pd.Int64Dtype()})
-        .dropna(subset=["barcode"])
-    )
+    df_vouchers: pd.DataFrame = df_orders.merge(
+        df_barcodes, on=["order_id"], how="left"
+    ).astype({"barcode": pd.Int64Dtype()})
 
     return (
         df_vouchers.sort_values(by=["customer_id", "order_id"])
@@ -60,12 +58,12 @@ def pipeline(
     barcodes_filepath: str,
     dest_path: str = None,
     transform_only: bool = False,
-    silent: bool = True,
+    silent: bool = False,
 ):
-    df_orders: pd.DataFrame = _extract(orders_filepath).pipe(
+    df_orders: pd.DataFrame = extract(orders_filepath).pipe(
         lambda df: OrdersValidator(df, silent=silent)()
     )
-    df_barcodes: pd.DataFrame = _extract(barcodes_filepath).pipe(
+    df_barcodes: pd.DataFrame = extract(barcodes_filepath).pipe(
         lambda df: BarcodesValidator(df, silent=silent)()
     )
 
