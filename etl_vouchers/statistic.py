@@ -1,7 +1,8 @@
-from typing import List
 from dataclasses import dataclass
-
+from typing import List
 import pandas as pd
+
+from etl_vouchers.utils import pretty_print
 
 
 @dataclass
@@ -14,17 +15,6 @@ class VoucherStatistic:
         self.top_5_buyers()
         self.unused_barcodes()
 
-    def _print(self, header: str, rows: List[str]):
-        print("*" * 50)
-        print(f"{header}")
-        print("*" * 50)
-
-        for it in rows:
-            print(it)
-
-        print("*" * 50)
-        print("\n" * 2)
-
     def top_5_buyers(self):
         df_resp: pd.DataFrame = (
             self.df_vouchers.groupby(["customer_id"])
@@ -34,11 +24,13 @@ class VoucherStatistic:
             .sort_values(by=["amount_of_tickets"], ascending=False)[:5]
         )
 
-        rows = [
+        rows: List[str] = [
             f"{it.customer_id}, {it.amount_of_tickets}" for _, it in df_resp.iterrows()
         ]
 
-        self._print("Top 5 Customers", ["customer_id, amount_of_tickets", *rows])
+        pretty_print(
+            "BONUS - Top 5 Customers", ["customer_id, amount_of_tickets", *rows]
+        )
 
     def unused_barcodes(self):
         df_resp: pd.DataFrame = self.df_barcodes.merge(
@@ -48,8 +40,8 @@ class VoucherStatistic:
         num: int = len(df_resp)
         multi: bool = num > 1
 
-        self._print(
-            "Unused barcodes",
+        pretty_print(
+            "BONUS - Unused barcodes",
             [
                 f"There {'are' if multi else 'is'} {len(df_resp)} unused barcode{'s' if multi else ''}",
                 "Barcodes:",
