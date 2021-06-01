@@ -38,7 +38,7 @@ def _load(df_vouchers: pd.DataFrame, dest_path: str):
     else:
         dest_path = sanitize_path(dest_path)
 
-    file_path = f"{dest_path}vouchers.{current_time()}.csv"
+    file_path: str = f"{dest_path}vouchers.{current_time()}.csv"
 
     df_vouchers.to_csv(file_path, index=False)
 
@@ -71,9 +71,9 @@ def pipeline(
 
     df_vouchers: pd.DataFrame = _transform(df_orders, df_barcodes)
 
-    if transform_only:
-        file_path = None
-    else:
+    file_path: Optional[str] = None
+
+    if not transform_only:
         file_path = _load(df_vouchers, dest_path)
 
     return PipelineResponse(
