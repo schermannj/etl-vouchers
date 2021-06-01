@@ -24,11 +24,14 @@ class Validator(ABC):
 
 class OrdersValidator(Validator):
     def __call__(self) -> pd.DataFrame:
-        self._has_expected_format()
+        if not self.has_expected_format():
+            raise InvalidSourceFile(
+                "Orders csv file has to contain 2 columns - customer_id, order_id"
+            )
 
         return self.df
 
-    def _has_expected_format(self):
+    def has_expected_format(self) -> bool:
         responses: List[Dict] = [
             self.dfe.expect_column_to_exist("customer_id", column_index=0),
             self.dfe.expect_column_values_to_not_be_null("customer_id"),
@@ -36,37 +39,17 @@ class OrdersValidator(Validator):
             self.dfe.expect_column_values_to_not_be_null("order_id"),
         ]
 
-        if not is_valid(responses):
-            raise InvalidSourceFile(
-                "Orders csv file has to contain 2 columns - customer_id, order_id"
-            )
+        return is_valid(responses)
 
 
 class BarcodesValidator(Validator):
-    def __call__(self, ignore_unused_barcodes=True) -> pd.DataFrame:
-        self._has_expected_format()
-        self._no_duplicate_barcodes()
-
-        if ignore_unused_barcodes:
-            self._no_orders_without_barcodes()
-
-        return self.df
-
-    def _has_expected_format(self):
-        responses: List[Dict] = [
-            self.dfe.expect_column_to_exist("barcode", column_index=0),
-            self.dfe.expect_column_to_exist("order_id", column_index=1),
-        ]
-
-        if not is_valid(responses):
+    def __call__(self) -> pd.DataFrame:
+        if not self.has_expected_format():
             raise InvalidSourceFile(
                 "Barcode csv file has to contain 2 columns - barcode, order_id"
             )
 
-    def _no_duplicate_barcodes(self):
-        responses: List[Dict] = [self.dfe.expect_column_values_to_be_unique("barcode")]
-
-        if not is_valid(responses):
+        if not self.no_duplicate_barcodes():
             if not self.silent:
                 pretty_print(
                     "Barcodes Validator - No Barcode Duplicates",
@@ -80,19 +63,36 @@ class BarcodesValidator(Validator):
 
             self.df = self.df.drop_duplicates(subset=["barcode"], keep=False)
 
-    def _no_orders_without_barcodes(self):
-        responses: List[Dict] = [
-            self.dfe.expect_column_values_to_not_be_null("order_id"),
-        ]
-
-        if not is_valid(responses):
+        if not self.no_orders_without_barcodes():
             if not self.silent:
                 pretty_print(
                     "Barcodes Validator - No Orders Without Barcodes",
                     [
                         "Next orders don't have barcodes",
-                        *self.df[self.df["order_id"].isna()]["barcode"].tolist(),
+                        *self.df[self.df["barcode"].isna()]["order_id"].tolist(),
                     ],
                 )
 
-            self.df = self.df.dropna(subset=["order_id"])
+            self.df = self.df.dropna(subset=["barcode"])
+
+        return self.df
+
+    def has_expected_format(self) -> bool:
+        responses: List[Dict] = [
+            self.dfe.expect_column_to_exist("barcode", column_index=0),
+            self.dfe.expect_column_to_exist("order_id", column_index=1),
+        ]
+
+        return is_valid(responses)
+
+    def no_duplicate_barcodes(self) -> bool:
+        responses: List[Dict] = [self.dfe.expect_column_values_to_be_unique("barcode")]
+
+        return is_valid(responses)
+
+    def no_orders_without_barcodes(self) -> bool:
+        responses: List[Dict] = [
+            self.dfe.expect_column_values_to_not_be_null("barcode"),
+        ]
+
+        return is_valid(responses)

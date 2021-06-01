@@ -63,8 +63,10 @@ def pipeline(
     df_orders: pd.DataFrame = extract(orders_filepath).pipe(
         lambda df: OrdersValidator(df, silent=silent)()
     )
-    df_barcodes: pd.DataFrame = extract(barcodes_filepath).pipe(
-        lambda df: BarcodesValidator(df, silent=silent)()
+    df_barcodes: pd.DataFrame = (
+        extract(barcodes_filepath)
+        .astype({"barcode": pd.Int64Dtype()})
+        .pipe(lambda df: BarcodesValidator(df, silent=silent)())
     )
 
     df_vouchers: pd.DataFrame = _transform(df_orders, df_barcodes)
