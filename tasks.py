@@ -20,7 +20,9 @@ def etl(c, orders, barcodes, dest=None, allow_useless=False):
         dest = "./datasets/"
 
     try:
-        resp: PipelineResponse = pipeline(orders, barcodes, dest, allow_useless_vouchers=allow_useless)
+        resp: PipelineResponse = pipeline(
+            orders, barcodes, dest, allow_useless_vouchers=allow_useless
+        )
 
         print(f"Output saved to {resp.output_filepath}\n")
     except ETLVouchersException as e:

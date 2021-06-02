@@ -2,7 +2,7 @@
 Vouchers ETL Service
 
 
-###Project Structure
+### Project Structure
 
 ```
 .
@@ -34,12 +34,14 @@ Vouchers ETL Service
 2. Navigate into the root of the project
 3. `poetry env use 3.7.2`
 4. `poetry install`
+5. `poetry run pytest`
 
 #### [Option 2] If don't want to mess with poetry. 
 Note, I haven't really tested it, and for a reason it fails on my laptop. Something related to setuptools.
 
 1. `pip install -e .`
-2. Done.
+2. `poetry run pytest`
+3. Done.
 
 ### How to Run
 

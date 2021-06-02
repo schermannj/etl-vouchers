@@ -45,9 +45,13 @@ class OrdersValidator(Validator):
     def has_expected_format(self) -> bool:
         responses: List[Dict] = [
             self.dfe.expect_column_to_exist("customer_id", column_index=0),
-            self.dfe.expect_column_values_to_not_be_null("customer_id"),
+            self.dfe.expect_column_values_to_not_be_null(
+                "customer_id", catch_exceptions=True
+            ),
             self.dfe.expect_column_to_exist("order_id", column_index=1),
-            self.dfe.expect_column_values_to_not_be_null("order_id"),
+            self.dfe.expect_column_values_to_not_be_null(
+                "order_id", catch_exceptions=True
+            ),
         ]
 
         return is_valid(responses)

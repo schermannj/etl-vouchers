@@ -39,6 +39,8 @@ class VoucherStatistic:
             f"BONUS - Top {top} Customers", ["customer_id, amount_of_tickets", *rows]
         )
 
+        return df_resp
+
     def unused_barcodes(self):
         df_barcodes = extract(self.barcodes_filepath)
         df_resp: pd.DataFrame = df_barcodes[df_barcodes["order_id"].isna()]
@@ -54,3 +56,5 @@ class VoucherStatistic:
                 df_resp["barcode"].to_list(),
             ],
         )
+
+        return df_resp
