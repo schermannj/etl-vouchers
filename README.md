@@ -20,6 +20,7 @@ Vouchers ETL Service
 ├── poetry.lock
 ├── pyproject.toml
 ├── README.md
+├── ERD.pdf - entity relationship model for orders, customers and barcodes
 ├── tasks.py - here stored all the cli tasks, that's the entry point.
 └── tests - tests are here
 
