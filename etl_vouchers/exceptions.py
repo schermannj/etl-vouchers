@@ -1,4 +1,8 @@
 class ETLVouchersException(Exception):
+    """
+    Base system exception.
+    """
+
     pass
 
 

@@ -12,7 +12,14 @@ def is_valid(validation_responses: List[Dict]) -> bool:
 
 
 class Validator(ABC):
-    def __init__(self, df, silent: bool = False):
+    """
+    Base validator class.
+
+    :param df - input pandas DataFrame that has to be validated.
+    :param silent - boolean flag, if true - nothing is printed to stdout.
+    """
+
+    def __init__(self, df: pd.DataFrame, silent: bool = False):
         self.df: pd.DataFrame = df
         self.dfe: PandasDataset = ge.from_pandas(self.df)
         self.silent: bool = silent
@@ -23,6 +30,10 @@ class Validator(ABC):
 
 
 class OrdersValidator(Validator):
+    """
+    Validator for Orders dataset.
+    """
+
     def __call__(self) -> pd.DataFrame:
         if not self.has_expected_format():
             raise InvalidSourceFile(
@@ -43,6 +54,10 @@ class OrdersValidator(Validator):
 
 
 class BarcodesValidator(Validator):
+    """
+    Validator for barcodes dataset.
+    """
+
     def __call__(self) -> pd.DataFrame:
         if not self.has_expected_format():
             raise InvalidSourceFile(

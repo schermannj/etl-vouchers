@@ -8,6 +8,10 @@ from etl_vouchers.utils import pretty_print
 
 @dataclass
 class VoucherStatistic:
+    """
+    Statistic dataclass for vouchers, responsible for data analysis and sending the results to stdout.
+    """
+
     orders_filepath: str
     barcodes_filepath: str
 

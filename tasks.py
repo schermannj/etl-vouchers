@@ -5,12 +5,22 @@ from etl_vouchers.statistic import VoucherStatistic
 
 
 @task
-def etl(c, orders, barcodes, dest=None):
+def etl(c, orders, barcodes, dest=None, allows_useless=False):
+    """
+    Runs ETL pipeline against the supplied csv files and generates the output file.
+
+    :param c: cmd
+    :param orders: path to orders csv
+    :param barcodes: path to barcodes csv
+    :param dest: path to the output folder
+    :param allows_useless: bool, if true, vouchers without any barcodes will be generated as well
+    :return:
+    """
     if dest is None:
         dest = "./datasets/"
 
     try:
-        resp: PipelineResponse = pipeline(orders, barcodes, dest)
+        resp: PipelineResponse = pipeline(orders, barcodes, dest, allow_useless_vouchers=allows_useless)
 
         print(f"Output saved to {resp.output_filepath}")
     except ETLVouchersException as e:
@@ -19,6 +29,15 @@ def etl(c, orders, barcodes, dest=None):
 
 @task
 def unused_barcodes(c, orders, barcodes):
+    """
+    Runs statistic class against the supplied data and
+    generates output amount of unused barcodes.
+
+    :param c: cmd
+    :param orders: path to orders csv
+    :param barcodes: path to barcodes csv
+    :return: None
+    """
     try:
         VoucherStatistic(
             orders_filepath=orders, barcodes_filepath=barcodes
@@ -29,6 +48,15 @@ def unused_barcodes(c, orders, barcodes):
 
 @task
 def top_customers(c, orders, barcodes):
+    """
+    Runs statistic class against the supplied data and
+    generates output for top 5 customers that bought the most amount of tickets.
+
+    :param c: cmd
+    :param orders: path to orders csv
+    :param barcodes: path to barcodes csv
+    :return: None
+    """
     try:
         VoucherStatistic(
             orders_filepath=orders, barcodes_filepath=barcodes
