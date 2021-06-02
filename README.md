@@ -36,7 +36,7 @@ Vouchers ETL Service
 4. `poetry install`
 
 #### [Option 2] If don't want to mess with poetry. 
-Note, I haven't really tested it, and for a reason it fails on my laptop.
+Note, I haven't really tested it, and for a reason it fails on my laptop. Something related to setuptools.
 
 1. `pip install -e .`
 2. Done.
