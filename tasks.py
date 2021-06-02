@@ -5,7 +5,7 @@ from etl_vouchers.statistic import VoucherStatistic
 
 
 @task
-def etl(c, orders, barcodes, dest=None, allows_useless=False):
+def etl(c, orders, barcodes, dest=None, allow_useless=False):
     """
     Runs ETL pipeline against the supplied csv files and generates the output file.
 
@@ -13,16 +13,16 @@ def etl(c, orders, barcodes, dest=None, allows_useless=False):
     :param orders: path to orders csv
     :param barcodes: path to barcodes csv
     :param dest: path to the output folder
-    :param allows_useless: bool, if true, vouchers without any barcodes will be generated as well
+    :param allow_useless: bool, if true, vouchers without any barcodes will be generated as well
     :return:
     """
     if dest is None:
         dest = "./datasets/"
 
     try:
-        resp: PipelineResponse = pipeline(orders, barcodes, dest, allow_useless_vouchers=allows_useless)
+        resp: PipelineResponse = pipeline(orders, barcodes, dest, allow_useless_vouchers=allow_useless)
 
-        print(f"Output saved to {resp.output_filepath}")
+        print(f"Output saved to {resp.output_filepath}\n")
     except ETLVouchersException as e:
         print("Failed with: ", e)
 
